@@ -1,4 +1,4 @@
-import type { Server } from 'node:http';
+import type { IncomingMessage, Server } from 'node:http';
 import { WebSocketServer, type WebSocket } from 'ws';
 import { CloseCode, type ClientMessage, type ServerMessage } from '../shared/types.ts';
 import type { Store } from './store.ts';
@@ -11,12 +11,14 @@ import type { Store } from './store.ts';
 const PATH = '/1/Session/socket';
 const PING_TIMEOUT_MS = 24_000;
 
-export function attachSocket(http: Server, store: Store) {
+/** `allow` filtra a origem no upgrade (o servidor público usa; o dev server não). */
+export function attachSocket(http: Server, store: Store, allow: (rq: IncomingMessage) => boolean = () => true) {
   const wss = new WebSocketServer({ noServer: true });
   const subs = new Map<WebSocket, Set<string>>();
 
   http.on('upgrade', (rq, socket, head) => {
     if (new URL(rq.url ?? '/', 'http://localhost').pathname !== PATH) return; // deixa o HMR do Vite passar
+    if (!allow(rq)) return socket.destroy();
     wss.handleUpgrade(rq, socket, head, (ws) => wss.emit('connection', ws));
   });
 

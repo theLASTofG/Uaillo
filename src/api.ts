@@ -2,12 +2,18 @@ import type { Action, Board, Card, CheckItem, Checklist, List } from '../shared/
 
 // Cliente REST fino sobre /1/.
 
-/** Build do GitHub Pages: sem servidor, a API roda no próprio navegador. */
-export const DEMO = import.meta.env.VITE_DEMO === '1';
+/**
+ * Backend usado pelo front. Vazio = mesma origem (dev server ou servidor standalone).
+ * No GitHub Pages, VITE_API_URL aponta para o servidor online (ex.: Render).
+ */
+export const API_BASE = (import.meta.env.VITE_API_URL ?? '').replace(/\/$/, '');
+
+/** Build do Pages sem backend configurado: a API roda no próprio navegador. */
+export const DEMO = import.meta.env.VITE_DEMO === '1' && !API_BASE;
 
 async function call<T>(method: string, path: string, body?: unknown): Promise<T> {
   if (DEMO) return (await import('./local-backend.ts')).localCall(method, path, body) as T;
-  const res = await fetch(path, {
+  const res = await fetch(API_BASE + path, {
     method,
     headers: body ? { 'content-type': 'application/json' } : undefined,
     body: body ? JSON.stringify(body) : undefined,

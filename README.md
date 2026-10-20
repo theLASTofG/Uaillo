@@ -16,13 +16,25 @@ Quadro Kanban no estilo do Trello, com tema medieval em pixel art (mural de guil
 - Filtro de cartões por nome ou etiqueta.
 - Sincronização em tempo real entre abas: carga inicial por REST, mudanças chegam como ações (`updateModels`) pelo socket, com ressincronização por `ixLastUpdate` ao reconectar.
 
-## Dois modos
+## Três modos
 
-| | Local (`npm run dev`) | GitHub Pages (demo) |
-|---|---|---|
-| Backend | API REST + WebSocket dentro do dev server do Vite | As mesmas rotas e o mesmo `Store`, rodando no navegador |
-| Dados | `data/db.json` | `localStorage` de cada visitante |
-| Tempo real | Entre todos os clientes conectados | Entre abas do mesmo navegador (evento `storage`) |
+| | Local (`npm run dev`) | Online compartilhado (Render) | GitHub Pages sem backend (demo) |
+|---|---|---|---|
+| Backend | API REST + WebSocket no dev server do Vite | `server/standalone.ts` (mesma API e socket) | As mesmas rotas e o mesmo `Store`, no navegador |
+| Dados | `data/db.json` | `data/db.json` no servidor (volta ao quadro inicial quando o Render reinicia) | `localStorage` de cada visitante |
+| Tempo real | Entre todos os clientes conectados | Entre todos que abrirem o site | Entre abas do mesmo navegador |
+
+O Pages usa o backend online quando a variável `UAILLO_API_URL` existe no repositório; sem ela, cai no modo demo.
+
+## Backend online (endpoint)
+
+1. No [Render](https://render.com), **New → Blueprint** e escolha este repositório. O [`render.yaml`](render.yaml) cria o serviço `uaillo` (plano gratuito, com WebSocket).
+2. Quando subir, copie a URL (ex.: `https://uaillo.onrender.com`). Ela já serve o app inteiro, e a API fica em `/1/…` com o socket em `/1/Session/socket`.
+3. Em **Settings → Secrets and variables → Actions → Variables**, crie `UAILLO_API_URL` com essa URL e rode o workflow `Pages` de novo. O site do Pages passa a usar o quadro compartilhado.
+
+Variáveis do servidor: `PORT`, `ALLOWED_ORIGINS` (origens liberadas para CORS e socket, separadas por vírgula; o próprio host sempre é aceito) e `DATA_FILE` (caminho do banco). Corpo de requisição limitado a 256 KB. A API não tem login: qualquer pessoa com o link pode editar o quadro.
+
+No plano gratuito o serviço dorme após 15 minutos sem uso; a primeira visita depois disso demora ~1 minuto e o socket reconecta sozinho.
 
 ## Rodar localmente
 
@@ -31,7 +43,15 @@ npm install
 npm run dev
 ```
 
-Abre em http://localhost:5180. Para gerar o site estático do Pages: `npm run build:pages` (saída em `dist/`).
+Abre em http://localhost:5180. Outros comandos:
+
+- `npm run build:pages`: site estático do Pages em `dist/` (com `VITE_API_URL` aponta para um backend).
+- `npm run build && npm start`: servidor de produção em http://localhost:8080.
+- `npm run theme`: regera `src/style.css` a partir de [`tools/gen-theme.py`](tools/gen-theme.py).
+
+## Tema medieval pixel art
+
+As regras de direção de arte (paleta, grade de pixels, molduras 9-slice, ícones, animações em `steps()`, checklist de entrega) estão na skill [`.claude/skills/medieval-pixel-art`](.claude/skills/medieval-pixel-art/SKILL.md), que o Claude Code carrega ao mexer no visual. Os SVGs do tema (cenário noturno, pedra, tochas, cursores, molduras) são gerados por `tools/gen-theme.py`; não edite os data-URIs do CSS à mão.
 
 ## Arquitetura
 

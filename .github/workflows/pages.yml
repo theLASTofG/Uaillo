@@ -29,6 +29,10 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build:pages
+        env:
+          # Variável do repositório (Settings → Secrets and variables → Actions → Variables).
+          # Com ela o Pages usa o backend online compartilhado; sem ela, o modo demo no navegador.
+          VITE_API_URL: ${{ vars.UAILLO_API_URL }}
 
       - uses: actions/setup-python@v5
         with:

@@ -1,21 +1,10 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { dirname, resolve } from 'node:path';
+import { resolve } from 'node:path';
 import type { Server } from 'node:http';
 import type { Plugin } from 'vite';
 import { handleApi } from './api.ts';
+import { fileStore } from './file-store.ts';
 import { attachSocket } from './socket.ts';
-import { Store, type Persistence } from './store.ts';
-
-/** Banco num arquivo JSON (modo local com servidor). */
-function fileStore(file: string): Persistence {
-  return {
-    load: () => (existsSync(file) ? JSON.parse(readFileSync(file, 'utf8')) : null),
-    save: (db) => {
-      mkdirSync(dirname(file), { recursive: true });
-      writeFileSync(file, JSON.stringify(db, null, 2));
-    },
-  };
-}
+import { Store } from './store.ts';
 
 /** Plugin do Vite que pendura a API REST e o socket no dev server. */
 export function uailloServer(): Plugin {

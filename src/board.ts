@@ -123,9 +123,16 @@ function badges(card: Card) {
   return out.length ? h('div', { className: 'badges' }, ...out) : '';
 }
 
+/** Destaca só a lista que vai receber o cartão (visual; não afeta a posição). */
+function markDropTarget(container: HTMLElement) {
+  if (container.classList.contains('drop-target')) return;
+  document.querySelectorAll('.drop-target').forEach((n) => n.classList.remove('drop-target'));
+  container.classList.add('drop-target');
+}
+
 function endDrag() {
   dragging = null;
-  document.querySelectorAll('.dragging').forEach((n) => n.classList.remove('dragging'));
+  document.querySelectorAll('.dragging, .drop-target').forEach((n) => n.classList.remove('dragging', 'drop-target'));
   // O drop já mandou o PUT; redesenha o que chegou pelo socket durante o arrasto.
   if (deferred) renderBoard(deferred.root, deferred.board);
 }
@@ -135,6 +142,7 @@ function endDrag() {
 function onCardDragOver(e: DragEvent, container: HTMLElement) {
   if (dragging?.kind !== 'card') return;
   e.preventDefault();
+  markDropTarget(container);
   const el = document.querySelector<HTMLElement>(`.card[data-id="${dragging.id}"]`);
   if (!el) return;
   const after = siblingAfter(container, '.card', e.clientY, 'y');

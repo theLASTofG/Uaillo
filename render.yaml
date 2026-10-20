@@ -1,0 +1,16 @@
+# Backend online do Uaillo no Render (plano gratuito, com WebSocket).
+# Render → New → Blueprint → escolha este repositório.
+services:
+  - type: web
+    name: uaillo
+    runtime: node
+    plan: free
+    buildCommand: npm ci --include=dev && npm run build
+    startCommand: npm start
+    healthCheckPath: /healthz
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: ALLOWED_ORIGINS
+        value: https://thelastofg.github.io

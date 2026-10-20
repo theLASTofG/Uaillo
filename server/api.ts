@@ -53,9 +53,15 @@ function send(rs: ServerResponse, status: number, data: unknown) {
   rs.end(JSON.stringify(data));
 }
 
+/** Corpo maior que isso é recusado (a API é pública no servidor online). */
+const MAX_BODY = 256 * 1024;
+
 async function readJson(rq: IncomingMessage) {
   let raw = '';
-  for await (const chunk of rq) raw += chunk;
+  for await (const chunk of rq) {
+    raw += chunk;
+    if (raw.length > MAX_BODY) throw new HttpError(413, 'body too large');
+  }
   try {
     return raw ? JSON.parse(raw) : {};
   } catch {

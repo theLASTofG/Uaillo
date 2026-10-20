@@ -8,6 +8,8 @@
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "build:pages": "tsc --noEmit && vite build --mode pages",
+    "start": "tsx server/standalone.ts",
+    "theme": "python tools/gen-theme.py",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
@@ -17,6 +19,7 @@
     "vite": "^6.0.0"
   },
   "dependencies": {
+    "tsx": "^4.19.2",
     "ws": "^8.18.0"
   }
 }

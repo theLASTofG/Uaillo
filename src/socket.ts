@@ -1,4 +1,5 @@
 import type { Action, ClientMessage, ServerMessage } from '../shared/types.ts';
+import { API_BASE } from './api.ts';
 
 // Cliente do /1/Session/socket.
 // - ping a cada 10 s (o servidor derruba após 24 s sem mensagens)
@@ -29,8 +30,9 @@ export class BoardSocket {
 
   connect() {
     this.onStatus('conectando');
-    const proto = location.protocol === 'https:' ? 'wss' : 'ws';
-    const ws = (this.ws = new WebSocket(`${proto}://${location.host}/1/Session/socket`));
+    const base = new URL(API_BASE || location.origin);
+    const proto = base.protocol === 'https:' ? 'wss' : 'ws';
+    const ws = (this.ws = new WebSocket(`${proto}://${base.host}/1/Session/socket`));
 
     ws.onopen = async () => {
       this.failures = 0;
