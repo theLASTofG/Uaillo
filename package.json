@@ -1,0 +1,22 @@
+{
+  "name": "uaillo",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Quadro Kanban inspirado na engenharia reversa do Trello (REST + socket com reqid + drag-and-drop nativo)",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "build:pages": "tsc --noEmit && vite build --mode pages",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@types/ws": "^8.5.13",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.0"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  }
+}
