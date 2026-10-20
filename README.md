@@ -18,23 +18,34 @@ Quadro Kanban no estilo do Trello, com tema medieval em pixel art (mural de guil
 
 ## Três modos
 
-| | Local (`npm run dev`) | Online compartilhado (Render) | GitHub Pages sem backend (demo) |
+| | Local (`npm run dev`) | Online compartilhado (Hugging Face ou Render) | GitHub Pages sem backend (demo) |
 |---|---|---|---|
 | Backend | API REST + WebSocket no dev server do Vite | `server/standalone.ts` (mesma API e socket) | As mesmas rotas e o mesmo `Store`, no navegador |
-| Dados | `data/db.json` | `data/db.json` no servidor (volta ao quadro inicial quando o Render reinicia) | `localStorage` de cada visitante |
+| Dados | `data/db.json` | arquivo no servidor (volta ao quadro inicial quando o serviço reinicia) | `localStorage` de cada visitante |
 | Tempo real | Entre todos os clientes conectados | Entre todos que abrirem o site | Entre abas do mesmo navegador |
 
 O Pages usa o backend online quando a variável `UAILLO_API_URL` existe no repositório; sem ela, cai no modo demo.
 
 ## Backend online (endpoint)
 
-1. No [Render](https://render.com), **New → Blueprint** e escolha este repositório. O [`render.yaml`](render.yaml) cria o serviço `uaillo` (plano gratuito, com WebSocket).
-2. Quando subir, copie a URL (ex.: `https://uaillo.onrender.com`). Ela já serve o app inteiro, e a API fica em `/1/…` com o socket em `/1/Session/socket`.
-3. Em **Settings → Secrets and variables → Actions → Variables**, crie `UAILLO_API_URL` com essa URL e rode o workflow `Pages` de novo. O site do Pages passa a usar o quadro compartilhado.
+### Hugging Face Spaces (grátis, sem cartão)
+
+1. Em https://huggingface.co/new-space, crie um Space com **SDK: Docker** (template *Blank*), visibilidade **Public**.
+2. Na aba **Files** do Space, substitua o `README.md` e crie o `Dockerfile` com o conteúdo de [`deploy/huggingface/`](deploy/huggingface). O Dockerfile clona este repositório no build, então o Space não precisa de mais nada.
+3. Quando o status ficar **Running**, a URL é `https://<usuario>-<space>.hf.space`. Ela já serve o app inteiro; a API fica em `/1/…` e o socket em `/1/Session/socket`.
+4. Para pegar commits novos: **Settings → Factory rebuild** no Space.
+
+### Render (pede cartão para verificação)
+
+**New → Blueprint** com este repositório; o [`render.yaml`](render.yaml) cria o serviço `uaillo`.
+
+### Ligar o GitHub Pages ao backend
+
+Em **Settings → Secrets and variables → Actions → Variables**, crie `UAILLO_API_URL` com a URL do backend e rode o workflow `Pages` de novo. O site do Pages passa a usar o quadro compartilhado.
 
 Variáveis do servidor: `PORT`, `ALLOWED_ORIGINS` (origens liberadas para CORS e socket, separadas por vírgula; o próprio host sempre é aceito) e `DATA_FILE` (caminho do banco). Corpo de requisição limitado a 256 KB. A API não tem login: qualquer pessoa com o link pode editar o quadro.
 
-No plano gratuito o serviço dorme após 15 minutos sem uso; a primeira visita depois disso demora ~1 minuto e o socket reconecta sozinho.
+Nos planos gratuitos o serviço dorme sem uso (Render: 15 min; Hugging Face: ~48 h); a primeira visita depois disso demora para acordar e o socket reconecta sozinho.
 
 ## Rodar localmente
 
