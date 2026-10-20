@@ -1,12 +1,12 @@
 # Uaillo
 
-[![Pages](https://github.com/OWNER/REPO/actions/workflows/pages.yml/badge.svg)](https://github.com/OWNER/REPO/actions/workflows/pages.yml)
+[![Pages](https://github.com/theLASTofG/Uaillo/actions/workflows/pages.yml/badge.svg)](https://github.com/theLASTofG/Uaillo/actions/workflows/pages.yml)
 
 Quadro Kanban no estilo do Trello, com tema medieval em pixel art (mural de guilda numa masmorra à noite). Foi feito a partir de engenharia reversa do cliente web do Trello (REST + socket com `reqid` + arrastar-e-soltar nativo) e da documentação pública da API.
 
-- **Demo:** https://OWNER.github.io/REPO/
-- **Mapa do repositório (graphify, atualizado a cada push):** https://OWNER.github.io/REPO/graph/
-- **Relatório do mapa:** https://OWNER.github.io/REPO/graph/GRAPH_REPORT.md
+- **Demo:** https://thelastofg.github.io/Uaillo/
+- **Mapa do repositório (graphify, atualizado a cada push):** https://thelastofg.github.io/Uaillo/graph/
+- **Relatório do mapa:** https://thelastofg.github.io/Uaillo/graph/GRAPH_REPORT.md
 
 ## Funcionalidades
 
@@ -77,8 +77,8 @@ flowchart LR
 
 O workflow [`pages.yml`](.github/workflows/pages.yml) roda o [graphify](https://github.com/safishamsi/graphify) a cada push na `main`. Ele extrai a estrutura do código por AST (sem LLM e sem chave de API), agrupa os módulos em comunidades e publica:
 
-- [`/graph/`](https://OWNER.github.io/REPO/graph/): grafo interativo para navegar pelos arquivos, funções e tipos;
-- [`/graph/GRAPH_REPORT.md`](https://OWNER.github.io/REPO/graph/GRAPH_REPORT.md): módulos mais conectados, conexões entre comunidades e perguntas sugeridas.
+- [`/graph/`](https://thelastofg.github.io/Uaillo/graph/): grafo interativo para navegar pelos arquivos, funções e tipos;
+- [`/graph/GRAPH_REPORT.md`](https://thelastofg.github.io/Uaillo/graph/GRAPH_REPORT.md): módulos mais conectados, conexões entre comunidades e perguntas sugeridas.
 
 Na nuvem os nomes das comunidades ficam genéricos (`Community N`), porque nomeá-las precisa de LLM. Localmente, `/graphify --update` no Claude Code gera o mapa completo, incluindo os documentos.
 
